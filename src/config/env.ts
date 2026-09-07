@@ -21,7 +21,7 @@ const envSchema = z.object({
   PGADMIN_DEFAULT_PASSWORD: z.string().min(1),
   PGADMIN_PORT: z.coerce.number().default(5050),
 
-  // Frontend
+  // Gateway
   GATEWAY_URL_DEV: z.string().url(),
   GATEWAY_URL_UAT: z.string().url(),
   GATEWAY_URL_PROD: z.string().url(),
