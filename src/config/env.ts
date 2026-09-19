@@ -14,17 +14,12 @@ const envSchema = z.object({
   POSTGRES_PORT: z.coerce.number().default(5432),
 
   // Prisma
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.url(),
 
-  // pgAdmin
-  PGADMIN_DEFAULT_EMAIL: z.string().email(),
-  PGADMIN_DEFAULT_PASSWORD: z.string().min(1),
-  PGADMIN_PORT: z.coerce.number().default(5050),
-
-  // Frontend
-  GATEWAY_URL_DEV: z.string().url(),
-  GATEWAY_URL_UAT: z.string().url(),
-  GATEWAY_URL_PROD: z.string().url(),
+  // Gateway
+  GATEWAY_URL_DEV: z.url(),
+  GATEWAY_URL_UAT: z.url(),
+  GATEWAY_URL_PROD: z.url(),
 });
 
 export const env = envSchema.parse(process.env);

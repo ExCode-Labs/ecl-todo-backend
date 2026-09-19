@@ -44,6 +44,7 @@ COPY --from=builder /app/dist ./dist
 
 # Copy Prisma configuration and schema
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 # Copy generated Prisma client
 COPY --from=builder /app/src/generated ./src/generated
