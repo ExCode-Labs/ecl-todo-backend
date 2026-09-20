@@ -11,5 +11,6 @@ const todoController = new TodoController(todoService);
 const router = Router();
 
 router.get('/', todoController.getTodos.bind(todoController));
+router.post('/', todoController.postTodos.bind(todoController));
 
 export default router;
