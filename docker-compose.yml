@@ -37,9 +37,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT}
-      GATEWAY_URL_DEV: ${GATEWAY_URL_DEV}
-      GATEWAY_URL_UAT: ${GATEWAY_URL_UAT}
-      GATEWAY_URL_PROD: ${GATEWAY_URL_PROD}
+      GATEWAY_URL: ${GATEWAY_URL}
 
     ports:
       - '${PORT}:${PORT}'

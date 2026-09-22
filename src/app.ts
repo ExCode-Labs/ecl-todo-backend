@@ -15,7 +15,7 @@ export function createApp() {
 
   app.use(
     cors({
-      origin: [env.GATEWAY_URL_DEV, env.GATEWAY_URL_UAT, env.GATEWAY_URL_PROD],
+      origin: [env.GATEWAY_URL],
       credentials: true,
     }),
   );
@@ -26,6 +26,8 @@ export function createApp() {
     logger.http(`${req.method} ${req.originalUrl}`);
     next();
   });
+
+  app.use('/api/todos', todoRouter);
 
   app.get('/health', async (_req, res) => {
     try {
@@ -54,8 +56,6 @@ export function createApp() {
       });
     }
   });
-
-  app.use('/api/todos', todoRouter);
 
   return app;
 }

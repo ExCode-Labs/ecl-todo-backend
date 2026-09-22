@@ -17,9 +17,7 @@ const envSchema = z.object({
   DATABASE_URL: z.url(),
 
   // Gateway
-  GATEWAY_URL_DEV: z.url(),
-  GATEWAY_URL_UAT: z.url(),
-  GATEWAY_URL_PROD: z.url(),
+  GATEWAY_URL: z.url(),
 });
 
 export const env = envSchema.parse(process.env);
