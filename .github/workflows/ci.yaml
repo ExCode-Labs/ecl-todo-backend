@@ -18,6 +18,10 @@ permissions:
   packages: write
 
 jobs:
+  # ==========================================
+  # Quality Checks
+  # ==========================================
+
   quality:
     name: Quality Checks
     runs-on: ubuntu-latest
@@ -25,12 +29,15 @@ jobs:
     services:
       postgres:
         image: postgres:18
+
         env:
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: admin123
           POSTGRES_DB: ecl-todo
+
         ports:
           - 5432:5432
+
         options: >-
           --health-cmd "pg_isready -U admin -d ecl-todo"
           --health-interval 5s
@@ -38,8 +45,16 @@ jobs:
           --health-retries 10
 
     steps:
+      # ------------------------------------------
+      # Checkout
+      # ------------------------------------------
+
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # ------------------------------------------
+      # Node.js
+      # ------------------------------------------
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,8 +62,16 @@ jobs:
           node-version: 24
           cache: npm
 
+      # ------------------------------------------
+      # Dependencies
+      # ------------------------------------------
+
       - name: Install dependencies
         run: npm ci
+
+      # ------------------------------------------
+      # Test Environment
+      # ------------------------------------------
 
       - name: Configure test environment
         run: |
@@ -66,8 +89,16 @@ jobs:
           GATEWAY_URL=http://localhost:5713
           EOF
 
+      # ------------------------------------------
+      # Prisma
+      # ------------------------------------------
+
       - name: Generate Prisma client
         run: npm run db:generate
+
+      # ------------------------------------------
+      # Code Quality
+      # ------------------------------------------
 
       - name: Lint
         run: npm run lint
@@ -78,11 +109,23 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
+      # ------------------------------------------
+      # Tests
+      # ------------------------------------------
+
       - name: Run tests
         run: npm test
 
+      # ------------------------------------------
+      # Application Build
+      # ------------------------------------------
+
       - name: Build
         run: npm run build
+
+  # ==========================================
+  # Docker Build & Push
+  # ==========================================
 
   docker:
     name: Build and Push Docker Image
@@ -90,8 +133,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ------------------------------------------
+      # Checkout
+      # ------------------------------------------
+
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # ------------------------------------------
+      # Login to GHCR
+      # ------------------------------------------
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -99,6 +150,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ------------------------------------------
+      # Docker Image Metadata
+      # ------------------------------------------
 
       - name: Extract Docker metadata
         id: meta
@@ -108,6 +163,10 @@ jobs:
           tags: |
             type=raw,value=latest
             type=sha
+
+      # ------------------------------------------
+      # Build & Push Docker Image
+      # ------------------------------------------
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6

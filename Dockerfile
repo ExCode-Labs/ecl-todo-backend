@@ -1,10 +1,8 @@
 # -----------------------------
 # Build stage
 # -----------------------------
-FROM node:22-alpine AS builder
 
-ARG DATABASE_URL
-ENV DATABASE_URL=$DATABASE_URL
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -18,7 +16,7 @@ RUN npm ci
 COPY . .
 
 # Generate Prisma client
-RUN npm run db:generate
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" npm run db:generate
 
 # Build TypeScript application
 RUN npm run build
@@ -27,7 +25,8 @@ RUN npm run build
 # -----------------------------
 # Production stage
 # -----------------------------
-FROM node:22-alpine AS production
+
+FROM node:24-alpine AS production
 
 WORKDIR /app
 
@@ -36,7 +35,7 @@ ENV NODE_ENV=production
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install production dependencies
 RUN npm ci --omit=dev --ignore-scripts
 
 # Copy compiled application
@@ -49,7 +48,7 @@ COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 # Copy generated Prisma client
 COPY --from=builder /app/src/generated ./src/generated
 
-EXPOSE 3000
+EXPOSE 3001
 
 # Apply migrations before starting the application
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
