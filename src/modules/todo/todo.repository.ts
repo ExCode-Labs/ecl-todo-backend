@@ -60,14 +60,23 @@ export class TodoRepository {
   }
 
   async create(data: CreateTodoRequestDto) {
+    const {
+      title,
+      description = '',
+      status = 'pending',
+      priority = 'medium',
+      completed = false,
+      dueDate = new Date(),
+    } = data;
+
     return prisma.todo.create({
       data: {
-        title: data.title,
-        description: data.description ?? '',
-        status: data.status ?? 'pending',
-        priority: data.priority ?? 'medium',
-        completed: data.completed ?? false,
-        dueDate: data.dueDate ?? new Date(),
+        title,
+        description,
+        status,
+        priority,
+        completed,
+        dueDate,
       },
     });
   }

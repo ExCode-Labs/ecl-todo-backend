@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { TodoService } from './todo.service';
 import { logger } from '../../config/logger';
-import type { CreateTodoRequestDto } from './todo.dto';
+import { createTodoSchema } from './todo.schema';
 
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
@@ -14,8 +14,26 @@ export class TodoController {
     res.status(200).json(todos);
   }
 
-  async postTodos(req: Request, res: Response) {
-    const todo = await this.todoService.postTodos(req.body as CreateTodoRequestDto);
+  async createTodos(req: Request, res: Response) {
+    const result = createTodoSchema.safeParse(req.body);
+
+    if (!result.success) {
+      res.status(400).json({
+        error: 'Title and description are mandotary',
+      });
+      return;
+    }
+
+    const { title, description, status, priority, completed, dueDate } = result.data;
+
+    const todo = await this.todoService.createTodos({
+      title,
+      description,
+      status,
+      priority,
+      completed,
+      ...(dueDate !== undefined ? { dueDate } : {}),
+    });
     logger.log('info', `created todo with id ${todo.id}`);
 
     res.status(201).json({

@@ -8,7 +8,7 @@ export class TodoService {
     return this.todoRepository.findAll();
   }
 
-  async postTodos(data: CreateTodoRequestDto) {
+  async createTodos(data: CreateTodoRequestDto) {
     return this.todoRepository.create(data);
   }
 }

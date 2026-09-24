@@ -7,11 +7,7 @@ export const createTodoSchema = z.object({
     .min(1, 'Title is required')
     .max(200, 'Title must not exceed 200 characters'),
 
-  description: z
-    .string()
-    .trim()
-    .max(5000, 'Description must not exceed 5000 characters')
-    .optional(),
+  description: z.string().trim().max(5000, 'Description must not exceed 5000 characters'),
 
   status: z.enum(['pending', 'inProgress', 'completed', 'cancelled']).default('pending'),
 
@@ -19,5 +15,5 @@ export const createTodoSchema = z.object({
 
   dueDate: z.coerce.date().optional(),
 
-  completedAt: z.coerce.date().optional(),
+  completed: z.boolean().default(false),
 });
