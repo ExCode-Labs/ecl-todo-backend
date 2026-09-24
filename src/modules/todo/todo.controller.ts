@@ -14,8 +14,8 @@ export class TodoController {
     res.status(200).json(todos);
   }
 
-  async postTodos(req: Request, res: Response) {
-    const todo = await this.todoService.postTodos(req.body as CreateTodoRequestDto);
+  async createTodos(req: Request, res: Response) {
+    const todo = await this.todoService.createTodos(req.body as CreateTodoRequestDto);
     logger.log('info', `created todo with id ${todo.id}`);
 
     res.status(201).json({
