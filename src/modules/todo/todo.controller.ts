@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { TodoService } from './todo.service';
 import { logger } from '../../config/logger';
+import type { CreateTodoRequestDto } from './todo.dto';
 
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
@@ -11,5 +12,14 @@ export class TodoController {
     logger.log('info', `returned all todos of length ${todos?.length}`);
 
     res.status(200).json(todos);
+  }
+
+  async createTodos(req: Request, res: Response) {
+    const todo = await this.todoService.createTodos(req.body as CreateTodoRequestDto);
+    logger.log('info', `created todo with id ${todo.id}`);
+
+    res.status(201).json({
+      data: todo,
+    });
   }
 }
