@@ -3,13 +3,13 @@ name: Todo Backend CI
 on:
   push:
     branches:
-      - TP-*
+      - 'TP-*'
       - develop
       - main
 
   pull_request:
     branches:
-      - TP-*
+      - 'TP-*'
       - develop
       - main
 
@@ -74,20 +74,7 @@ jobs:
       # ------------------------------------------
 
       - name: Configure test environment
-        run: |
-          cat > .env << 'EOF'
-          NODE_ENV=test
-          PORT=3001
-
-          POSTGRES_USER=admin
-          POSTGRES_PASSWORD=admin123
-          POSTGRES_DB=ecl-todo
-          POSTGRES_PORT=5432
-
-          DATABASE_URL=postgresql://admin:admin123@localhost:5432/ecl-todo?schema=public
-
-          GATEWAY_URL=http://localhost:5713
-          EOF
+        run: cp .env.example .env
 
       # ------------------------------------------
       # Prisma
@@ -132,6 +119,10 @@ jobs:
     needs: quality
     runs-on: ubuntu-latest
 
+    # Docker image is created ONLY after a push to main.
+    # PRs and other branches only run quality checks.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
     steps:
       # ------------------------------------------
       # Checkout
@@ -162,7 +153,6 @@ jobs:
           images: ghcr.io/${{ github.repository_owner }}/todo-backend
           tags: |
             type=raw,value=latest
-            type=sha
 
       # ------------------------------------------
       # Build & Push Docker Image
