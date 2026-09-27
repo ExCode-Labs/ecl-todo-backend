@@ -1,3 +1,6 @@
+import { prisma } from '../../database/prisma';
+import type { CreateTodoRequestDto } from './todo.dto';
+
 export class TodoRepository {
   private todos = [
     {
@@ -54,5 +57,27 @@ export class TodoRepository {
 
   async findAll() {
     return this.todos;
+  }
+
+  async create(data: CreateTodoRequestDto) {
+    const {
+      title,
+      description = '',
+      status = 'pending',
+      priority = 'medium',
+      completed = false,
+      dueDate = new Date(),
+    } = data;
+
+    return prisma.todo.create({
+      data: {
+        title,
+        description,
+        status,
+        priority,
+        completed,
+        dueDate,
+      },
+    });
   }
 }
